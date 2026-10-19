@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEON SKY // Audio-Reactive Infinite Cyber-Metropolis FPV Drone</title>
+  <meta name="description" content="Infinite audio-reactive cyberpunk drone flight simulator with autonomous straight and random slalom modes, real-time Web Audio analysis, and FPV cockpit HUD.">
+  <script type="module" crossorigin src="/assets/index-B-roO6JI.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-GiyT8lHn.css">
+</head>
+<body>
+  <!-- 3D Three.js WebGL Scene -->
+  <div id="canvas-container"></div>
+
+  <!-- Tactical FPV Drone HUD Overlay -->
+  <canvas id="hud-canvas"></canvas>
+
+  <!-- CRT Scanlines & Optical Vignette -->
+  <div class="crt-overlay"></div>
+
+  <!-- Real-time HUD Toast Notification -->
+  <div id="ui-toast" class="ui-toast"></div>
+
+  <!-- Quick Action Icons (Top-Right) -->
+  <div class="quick-deck">
+    <button id="btn-toggle-theme" class="icon-btn" title="Switch Biome: Cyber / Nature (T)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3l4 8 5-5 5 15H2L8 3z"/>
+      </svg>
+    </button>
+    <button id="btn-toggle-daynight" class="icon-btn" title="Toggle Celestial Time: Day / Night (N)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"/>
+        <path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+      </svg>
+    </button>
+    <button id="btn-toggle-bloom" class="icon-btn active" title="Toggle Neon Glow / Bloom (B)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"/>
+        <path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+      </svg>
+    </button>
+    <button id="btn-toggle-hud" class="icon-btn h-btn" title="Hide / Show All Options on Screen (H)">
+      <span class="btn-key-label">H</span>
+    </button>
+    <button id="btn-fullscreen" class="icon-btn" title="Fullscreen (F)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Glassmorphism Drone Control Deck -->
+  <div id="control-deck">
+    <div class="deck-header">
+      <div class="deck-title">
+        <span class="deck-status-dot"></span>
+        <span>AERO-DRONE // FLIGHT CONTROLS</span>
+      </div>
+      <div class="deck-actions">
+        <button id="btn-hide-all-options" class="deck-toggle-btn" title="Hide All Screen Options (H)">HIDE ALL (H)</button>
+        <button id="btn-collapse-deck" class="deck-toggle-btn">COLLAPSE ▲</button>
+      </div>
+    </div>
+
+    <div class="deck-content">
+      <!-- Section 1: Environment Biome Theme -->
+      <div class="deck-section">
+        <span class="section-label">WORLD BIOME (T)</span>
+        <div class="btn-group">
+          <button id="btn-theme-cyber" class="mode-btn active" title="Infinite Cyberpunk Metropolis">
+            <span>🌆 CYBER</span>
+            <small style="opacity:0.7">Metropolis</small>
+          </button>
+          <button id="btn-theme-nature" class="mode-btn nature" title="Endless Alpine Canyon & River Valley">
+            <span>🌿 NATURE</span>
+            <small style="opacity:0.7">Emerald Valley</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 2: Celestial Time (Day / Night Manual Switch) -->
+      <div class="deck-section">
+        <span class="section-label">CELESTIAL TIME (N)</span>
+        <div class="btn-group">
+          <button id="btn-time-day" class="mode-btn active" title="Bright Sunny Daylight">
+            <span>☀️ DAY</span>
+            <small style="opacity:0.7">Bright Day</small>
+          </button>
+          <button id="btn-time-night" class="mode-btn night" title="Midnight Starlight & Fireflies">
+            <span>🌙 NIGHT</span>
+            <small style="opacity:0.7">Starry Abyss</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 2: Navigation / Autopilot Modes -->
+      <div class="deck-section">
+        <span class="section-label">AUTOPILOT / FLIGHT TRAJECTORY</span>
+        <div class="btn-group">
+          <button id="btn-mode-straight" class="mode-btn active" title="Lock straight ahead along canyon / boulevard">
+            <span>⚡ STRAIGHT</span>
+            <small style="opacity:0.7">Cruising Path</small>
+          </button>
+          <button id="btn-mode-random" class="mode-btn random" title="Autonomous 3D slalom weaving and banking">
+            <span>🌪️ RANDOM</span>
+            <small style="opacity:0.7">Dynamic Slalom</small>
+          </button>
+          <button id="btn-mode-manual" class="mode-btn" title="Full pilot control with WASD + Mouse">
+            <span>🕹️ MANUAL</span>
+            <small style="opacity:0.7">FPV Pilot</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 3: Speed Control Slider -->
+      <div class="deck-section">
+        <div class="slider-header">
+          <span class="section-label">FLIGHT VELOCITY</span>
+          <span id="speed-display" class="speed-readout">140 KM/H</span>
+        </div>
+        <div class="slider-container">
+          <input type="range" id="speed-slider" class="cyber-slider" min="20" max="400" step="5" value="140">
+          <div class="speed-presets">
+            <button class="preset-chip" data-speed="70">GLIDE (70)</button>
+            <button class="preset-chip" data-speed="140">CRUISE (140)</button>
+            <button class="preset-chip" data-speed="260">BOOST (260)</button>
+            <button class="preset-chip" data-speed="380">WARP (380)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Audio Reactive Source -->
+      <div class="deck-section">
+        <span class="section-label">AUDIO SOURCE</span>
+        <div class="audio-action-row">
+          <button id="btn-audio-synth" class="action-btn active" title="Built-in Cyberpunk & Ambient Synth Generator">
+            <span>🎵 SYNTH</span>
+          </button>
+          <button id="btn-audio-mic" class="action-btn" title="Live Microphone input">
+            <span>🎙️ MIC</span>
+          </button>
+          <button id="btn-audio-file" class="action-btn" title="Upload local MP3 or audio file">
+            <span>📁 MP3</span>
+          </button>
+        </div>
+        <input type="file" id="audio-file-input" accept="audio/*" style="display: none;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Launch Modal (Required by browser Web Audio policies) -->
+  <div id="start-overlay">
+    <div class="start-modal">
+      <h1 class="modal-title">NEON SKY // FPV</h1>
+      <p class="modal-desc">
+        Endless audio-reactive drone flight simulator with dual procedural biomes:
+        <b>🌆 Cyber Metropolis</b> and <b>🌿 Emerald Alpine Canyon</b>.
+        Featuring autonomous straight cruising, dynamic acrobatic slalom, real-time speed regulation, and sub-bass warp bursts.
+      </p>
+
+      <button id="btn-start" class="start-btn">ENGAGE SYSTEMS & AUDIO</button>
+
+      <div class="keys-hint">
+        🌿 <b>KEY 'T'</b>: Biome &bull; ☀️/🌙 <b>KEY 'N'</b>: Day/Night &bull; ⚡ <b>1/2/3</b>: Modes &bull; <b>B</b>: Glow &bull; <b>H</b>: Hide/Show All
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
